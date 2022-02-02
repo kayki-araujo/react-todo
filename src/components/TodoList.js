@@ -5,11 +5,13 @@ import {
   IconButton,
   StackDivider,
   Spacer,
-  Badge
+  Badge,
+  Input,
 } from "@chakra-ui/react";
-import { FaTrash } from "react-icons/fa";
+import { useState } from "react";
+import { FaTrash, FaPen, FaCheck } from "react-icons/fa";
 
-const TodoList = ({ todos, deleteTodo }) => {
+const TodoList = ({ todos, deleteTodo, modifyTodo }) => {
   if (!todos.length) {
     return (
       <Badge colorScheme="green" p={4} borderRadius="md">
@@ -17,6 +19,8 @@ const TodoList = ({ todos, deleteTodo }) => {
       </Badge>
     );
   }
+
+  const [todosToEdit, setTodosToEdit] = useState([]);
 
   return (
     <VStack
@@ -29,14 +33,32 @@ const TodoList = ({ todos, deleteTodo }) => {
       maxW={{ base: "90vw", sm: "80vw", lg: "50vw", xl: "40vw" }}
       alignItems="stretch"
     >
-      {todos.map((todo) => (
+      {todos.map(({ id, body }) => (
         <HStack>
-          <Text>{todo.body}</Text>
+          {todosToEdit.includes(id) ? (
+            <Input
+              onChange={(e) => modifyTodo(id, e.target.value)}
+              value={body}
+              variant="flushed"
+              placeholder={body}
+            />
+          ) : (
+            <Text>{body}</Text>
+          )}
           <Spacer />
+          <IconButton
+            icon={todosToEdit.includes(id) ? <FaCheck /> : <FaPen />}
+            isRound={true}
+            onClick={() =>
+              todosToEdit.includes(id)
+                ? setTodosToEdit(todosToEdit.filter((todo) => todo !== id))
+                : setTodosToEdit([...todosToEdit, id])
+            }
+          ></IconButton>
           <IconButton
             icon={<FaTrash />}
             isRound={true}
-            onClick={() => deleteTodo(todo.id)}
+            onClick={() => deleteTodo(id)}
           ></IconButton>
         </HStack>
       ))}

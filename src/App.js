@@ -20,6 +20,9 @@ const App = () => {
   const addTodo = (todo) => {
     setTodos([...todos, todo]);
   };
+  const modifyTodo = (id, body) => {
+    setTodos(todos.map((todo) => (todo.id === id ? { id, body } : todo)));
+  };
 
   return (
     <VStack p={4}>
@@ -40,7 +43,7 @@ const App = () => {
       >
         Tarefas
       </Heading>
-      <TodoList todos={todos} deleteTodo={deleteTodo} />
+      <TodoList todos={todos} deleteTodo={deleteTodo} modifyTodo={modifyTodo}/>
       <AddTodo addTodo={addTodo} />
     </VStack>
   );
