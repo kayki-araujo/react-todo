@@ -5,20 +5,8 @@ import { nanoid } from "nanoid";
 const AddTodo = ({ addTodo }) => {
   const [inputText, setInputText] = useState("");
 
-  const toast = useToast();
-
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!inputText) {
-      toast({
-        title: "Atenção",
-        description: "Você não pode deixar tarefa em branco",
-        status: "error",
-        duration: 4000,
-        isClosable: true
-      });
-      return;
-    }
     addTodo({ id: nanoid(), body: inputText });
     setInputText("");
   };

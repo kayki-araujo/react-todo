@@ -22,6 +22,17 @@ const TodoList = ({ todos, deleteTodo, modifyTodo }) => {
 
   const [todosToEdit, setTodosToEdit] = useState([]);
 
+  const isTodoToEdit = (id) => todosToEdit.some((todo) => todo.id === id);
+
+  const handleEditClick = (id, body) => {
+    if (!isTodoToEdit(id)) {
+      setTodosToEdit([...todosToEdit, { id, body }]);
+      return;
+    }
+    setTodosToEdit(todosToEdit.filter((todo) => todo.id !== id));
+    modifyTodo(id, todosToEdit.find((todo) => todo.id === id).body);
+  };
+
   return (
     <VStack
       divider={<StackDivider />}
@@ -35,10 +46,16 @@ const TodoList = ({ todos, deleteTodo, modifyTodo }) => {
     >
       {todos.map(({ id, body }) => (
         <HStack>
-          {todosToEdit.includes(id) ? (
+          {isTodoToEdit(id) ? (
             <Input
-              onChange={(e) => modifyTodo(id, e.target.value)}
-              value={body}
+              onChange={(e) =>
+                setTodosToEdit(
+                  todosToEdit.map((todo) =>
+                    todo.id === id ? { id, body: e.target.value } : todo
+                  )
+                )
+              }
+              value={todosToEdit.find((todo) => todo.id === id).body}
               variant="flushed"
               placeholder={body}
             />
@@ -47,13 +64,9 @@ const TodoList = ({ todos, deleteTodo, modifyTodo }) => {
           )}
           <Spacer />
           <IconButton
-            icon={todosToEdit.includes(id) ? <FaCheck /> : <FaPen />}
+            icon={isTodoToEdit(id) ? <FaCheck /> : <FaPen />}
             isRound={true}
-            onClick={() =>
-              todosToEdit.includes(id)
-                ? setTodosToEdit(todosToEdit.filter((todo) => todo !== id))
-                : setTodosToEdit([...todosToEdit, id])
-            }
+            onClick={() => handleEditClick(id, body)}
           ></IconButton>
           <IconButton
             icon={<FaTrash />}

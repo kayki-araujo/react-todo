@@ -1,4 +1,10 @@
-import { Heading, VStack, IconButton, useColorMode } from "@chakra-ui/react";
+import {
+  Heading,
+  VStack,
+  IconButton,
+  useColorMode,
+  useToast,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { AddTodo, TodoList } from "./components";
@@ -14,13 +20,33 @@ const App = () => {
 
   const { colorMode, toggleColorMode } = useColorMode();
 
+  const toast = useToast();
+
+  const showToast = () => {
+    toast({
+      title: "Atenção",
+      description: "Você não pode deixar tarefa em branco",
+      status: "error",
+      duration: 4000,
+      isClosable: true,
+    });
+  };
+
   const deleteTodo = (id) => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
   const addTodo = (todo) => {
+    if (!todo.body) {
+      showToast();
+      return;
+    }
     setTodos([...todos, todo]);
   };
   const modifyTodo = (id, body) => {
+    if (!body) {
+      showToast();
+      return;
+    }
     setTodos(todos.map((todo) => (todo.id === id ? { id, body } : todo)));
   };
 
@@ -43,7 +69,7 @@ const App = () => {
       >
         Tarefas
       </Heading>
-      <TodoList todos={todos} deleteTodo={deleteTodo} modifyTodo={modifyTodo}/>
+      <TodoList todos={todos} deleteTodo={deleteTodo} modifyTodo={modifyTodo} />
       <AddTodo addTodo={addTodo} />
     </VStack>
   );
